@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            background: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .quiz-container {
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .question-box {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f9f9f9;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            color: #34495e;
+            font-style: italic;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .answers button {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            border: none;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .answers button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #result {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #27ae60;
+        }
+
+        .result-box {
+            background: #eafaf1;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            font-style: italic;
+            color: #2c3e50;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz Time!</h1>
+        <p class="question-box" id="question">Loading question...</p>
+        <div class="answers" id="answers"></div>
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Who is the current Prime Minister of India (2025)?",
+                options: ["Narendra Modi", "Rahul Gandhi", "Arvind Kejriwal", "Amit Shah"],
+                correct: "Narendra Modi"
+            },
+            {
+                question: "Which cricketer is nicknamed 'The God of Cricket'?",
+                options: ["Virat Kohli", "Sachin Tendulkar", "MS Dhoni", "Rohit Sharma"],
+                correct: "Sachin Tendulkar"
+            },
+            {
+                question: "Which app is known for short video creation?",
+                options: ["Instagram", "TikTok", "WhatsApp", "YouTube"],
+                correct: "TikTok"
+            },
+            {
+                question: "Which YouTuber is known for 'Technical Guruji'?",
+                options: ["CarryMinati", "Bhuvan Bam", "Gaurav Chaudhary", "Ashish Chanchlani"],
+                correct: "Gaurav Chaudhary"
+            },
+            {
+                question: "Which country has won the most Cricket World Cups?",
+                options: ["India", "Australia", "England", "Pakistan"],
+                correct: "Australia"
+            },
+            {
+                question: "Which app is commonly used for food delivery?",
+                options: ["Swiggy", "Instagram", "LinkedIn", "Spotify"],
+                correct: "Swiggy"
+            },
+            {
+                question: "Who is the captain of the Indian cricket team in 2025?",
+                options: ["Virat Kohli", "Rohit Sharma", "KL Rahul", "Shubman Gill"],
+                correct: "Rohit Sharma"
+            },
+            {
+                question: "Which app is owned by Google?",
+                options: ["YouTube", "Snapchat", "Facebook", "Telegram"],
+                correct: "YouTube"
+            },
+            {
+                question: "Which cricketer is known as 'Captain Cool'?",
+                options: ["MS Dhoni", "Virat Kohli", "Ricky Ponting", "Sourav Ganguly"],
+                correct: "MS Dhoni"
+            },
+            {
+                question: "Which social media platform is primarily video-based?",
+                options: ["YouTube", "Twitter", "LinkedIn", "Facebook"],
+                correct: "YouTube"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionEl = document.getElementById("question");
+        const answersEl = document.getElementById("answers");
+        const resultEl = document.getElementById("result");
+
+        function loadQuestion() {
+            const quiz = quizData[currentQuestion];
+            questionEl.textContent = `"${quiz.question}"`;
+            answersEl.innerHTML = "";
+
+            quiz.options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.textContent = option;
+                btn.addEventListener("click", () => handleAnswer(option));
+                answersEl.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selected) {
+            const correct = quizData[currentQuestion].correct;
+            if (selected === correct) score++;
+
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            questionEl.style.display = "none";
+            answersEl.style.display = "none";
+            resultEl.style.display = "block";
+
+            resultEl.innerHTML = `
+                <p>Your Score: ${score}/${quizData.length}</p>
+                <p>${score >= 7 ? "Excellent work! 🎉" : score >= 5 ? "Good effort! 😊" : "Keep practicing! 🙌"}</p>
+            `;
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
